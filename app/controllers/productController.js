@@ -3,10 +3,10 @@ import {
   getProducts,
   updateProduct,
   deleteProduct
-} from "@/services/productService";
+} from "../services/productService";
 
-import { verifyToken } from "@/middlewares/authMiddleware";
-import { authorizeRole } from "@/middlewares/roleMiddleware";
+import { verifyToken } from "../middlewares/authMiddleware";
+import { authorizeRole } from "../middlewares/roleMiddleware";
 
 export const create = async (req) => {
   const user = verifyToken(req);

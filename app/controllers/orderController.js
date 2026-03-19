@@ -5,10 +5,10 @@ import {
   updateOrderStatus,
   updatePaymentStatus,
   cancelOrder,
-} from "@/services/orderService";
+} from "../services/orderService";
 
-import { verifyToken } from "@/middlewares/authMiddleware";
-import { authorizeRole } from "@/middlewares/roleMiddleware";
+import { verifyToken } from "../middlewares/authMiddleware";
+import { authorizeRole } from "../middlewares/roleMiddleware";
 
 // ✅ CREATE
 export const create = async (req) => {

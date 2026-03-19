@@ -1,10 +1,12 @@
-import Product from "@/models/Product";
+import Product from "../models/Product";
+import { dbConnect } from "../lib/dbConnect";
 
 export const createProduct = async (data, userId) => {
   return await Product.create({ ...data, createdBy: userId });
 };
 
 export const getProducts = async () => {
+    await dbConnect(); 
   return await Product.find();
 };
 

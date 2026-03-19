@@ -1,4 +1,4 @@
-import { create, getMyOrders } from "@/controllers/orderController";
+import { create , getMyOrders } from "@/app/controllers/orderController";
 
 export async function POST(req) {
   return create(req);

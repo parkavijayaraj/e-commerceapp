@@ -1,7 +1,7 @@
-import User from "@/models/User";
+import User from "../models/User";
 import bcrypt from "bcryptjs";
-import { generateToken } from "@/utils/jwt";
-import { dbConnect } from "@/lib/dbConnect";
+import { generateToken } from "../utils/jwt";
+import { dbConnect } from "../lib/dbConnect";
 
 export const registerUser = async (data) => {
   await dbConnect();

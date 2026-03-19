@@ -1,6 +1,6 @@
-import Order from "@/models/Order";
-import Product from "@/models/Product";
-import { dbConnect } from "@/lib/dbConnect";
+import Order from "../models/Order";
+import Product from "../models/Product";
+import { dbConnect } from "../lib/dbConnect";
 
 // ✅ AUTO CALCULATE TOTAL
 export const createOrder = async (data, userId) => {

@@ -1,5 +1,5 @@
 // app/api/product/route.js
-import { create, getAll } from "@/controllers/productController";
+import { create , getAll } from "@/app/controllers/productController";
 
 export async function POST(req) {
   return create(req);
