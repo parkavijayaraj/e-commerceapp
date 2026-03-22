@@ -1,11 +1,13 @@
-// app/api/product/route.js
-import { create , getAll } from "@/app/controllers/productController";
+//import { getAllProducts, createProduct } from "@/controllers/productController";
 
-export async function POST(req) {
-  return create(req);
+import { getAllProducts, createProduct } from "@/app/controllers/productController";
+
+export async function GET(request) {
+  return getAllProducts(request);
 }
 
-export async function GET() {
-  return getAll();
+export async function POST(request) {
+  return createProduct(request);
 }
+
 

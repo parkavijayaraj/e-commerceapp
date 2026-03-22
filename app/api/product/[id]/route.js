@@ -1,12 +1,20 @@
-// app/api/product/[id]/route.js
-import { update, remove } from "@/controllers/productController";
+// import {
+//   getProductById,
+//   updateProduct,
+//   deleteProduct,
+// } from "@/controllers/productController";
 
-export async function PUT(req, context) {
-  return update(req, context);
+import { getProductById, updateProduct, deleteProduct } from "@/app/controllers/productController";
+
+export async function GET(request, { params }) {
+  return getProductById(params.id);
 }
 
-export async function DELETE(req, context) {
-  return remove(req, context);
+export async function PUT(request, { params }) {
+  return updateProduct(params.id, request);
 }
 
+export async function DELETE(request, { params }) {
+  return deleteProduct(params.id);
+}
 
