@@ -14,9 +14,7 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import PeopleIcon from "@mui/icons-material/People";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { useRouter } from "next/navigation";
@@ -27,9 +25,10 @@ export default function Sidebar({ children }) {
   const router = useRouter();
 
   const menu = [
-    { text: "Overview", icon: <DashboardIcon />, path: "/overview" },
     { text: "Orders", icon: <ShoppingCartIcon />, path: "/orders" },
     { text: "Products", icon: <InventoryIcon />, path: "/products" },
+    { text: "AboutUs", icon: <DashboardIcon />, path: "/aboutus" },
+    { text: "ContactUs", icon: <DashboardIcon />, path: "/contactus" },
   ];
 
   const settings = [
@@ -53,7 +52,7 @@ export default function Sidebar({ children }) {
         }}
       >
         {/* Logo */}
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 2 }}>
           <Typography variant="h6" fontWeight="bold" color="primary">
             MyShop
           </Typography>
@@ -108,7 +107,7 @@ export default function Sidebar({ children }) {
             ))}
           </List>
         </Box>
-
+ <Divider />
         {/* Logout pinned at bottom */}
         <Box sx={{ p: 2, mt: "auto" }}>
           <List>
@@ -128,17 +127,7 @@ export default function Sidebar({ children }) {
         </Box>
       </Drawer>
 
-      {/* Main Content */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          backgroundColor: "#f5f5f5",
-          minHeight: "100vh",
-        }}
-      >
-        {children}
-      </Box>
+    
     </Box>
   );
 }

@@ -48,13 +48,7 @@ export default function TopNavbar() {
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
         
-        {/* LEFT */}
-        <Box>
-          <Typography variant="h6" fontWeight="600">
-            MyShop
-          </Typography>
        
-        </Box>
 
         {/* CENTER SEARCH */}
         <Paper

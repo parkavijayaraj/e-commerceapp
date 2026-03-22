@@ -86,38 +86,42 @@ export async function createProduct(request) {
 // ─── UPDATE product ───────────────────────────────────────────────────────────
 
 export async function updateProduct(id, request) {
+  await dbConnect();
   try {
-    await dbConnect();
-    const body = await request.json();
+    const body = await request.json(); // parse PUT request body
+    const updated = await Product.findByIdAndUpdate(
+      id,
+      { name: body.name, price: body.price, stock: body.stock },
+      { runValidators: true, returnDocument: "after" } // fixes Mongoose warning
+    );
 
-    const product = await Product.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!product) return sendError("Product not found", 404);
-    return sendResponse(product, "Product updated");
-  } catch (err) {
-    if (err.name === "ValidationError") {
-      const messages = Object.values(err.errors).map((e) => e.message);
-      return sendError(messages.join(", "), 400);
+    if (!updated) {
+      return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
     }
-    return sendError(err.message);
+    return new Response(JSON.stringify(updated), { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return new Response(JSON.stringify({ error: "Failed to update product" }), { status: 500 });
   }
 }
 
 // ─── DELETE product ───────────────────────────────────────────────────────────
 
 export async function deleteProduct(id) {
+  await dbConnect();
   try {
-    await dbConnect();
-    const product = await Product.findByIdAndDelete(id);
-    if (!product) return sendError("Product not found", 404);
-    return sendResponse(null, "Product deleted");
+    const deleted = await Product.findByIdAndDelete(id);
+    if (!deleted) {
+      return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
+    }
+    return new Response(JSON.stringify({ message: "Product deleted" }), { status: 200 });
   } catch (err) {
-    return sendError(err.message);
+    console.error(err);
+    return new Response(JSON.stringify({ error: "Failed to delete product" }), { status: 500 });
   }
 }
+
+
 
 
 

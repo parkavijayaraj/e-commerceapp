@@ -1,9 +1,3 @@
-// import {
-//   getProductById,
-//   updateProduct,
-//   deleteProduct,
-// } from "@/controllers/productController";
-
 import { getProductById, updateProduct, deleteProduct } from "@/app/controllers/productController";
 
 export async function GET(request, { params }) {
@@ -11,10 +5,16 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-  return updateProduct(params.id, request);
+  const { id } = await params;
+  return updateProduct(id, request);
 }
 
 export async function DELETE(request, { params }) {
-  return deleteProduct(params.id);
+  const { id } = await params;
+  return deleteProduct(id);
 }
+
+
+
+
 
