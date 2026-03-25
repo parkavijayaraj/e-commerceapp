@@ -68,6 +68,9 @@ export default function AuthForm({ type }) {
       setError(true);
       console.error(err);
     }
+    finally {
+      setLoading(false); 
+    }
   };
 
   return (
