@@ -46,8 +46,8 @@ export default function AdminProducts() {
     try {
       const method = editId ? "PUT" : "POST";
       const url = editId
-        ? `http://localhost:3000/api/product/${editId}`
-        : "http://localhost:3000/api/product";
+        ? `https://ecommercemyshopapp.netlify.app/api/product/${editId}`
+        : "https://ecommercemyshopapp.netlify.app/api/product";
 
       const res = await fetch(url, {
         method,
@@ -79,7 +79,7 @@ export default function AdminProducts() {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/api/product/${id}`, {
+      const res = await fetch(`https://ecommercemyshopapp.netlify.app/api/product/${id}`, {
         method: "DELETE",
       });
 
