@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Box,
-  TextField,
   Typography,
   Button,
   CircularProgress,
@@ -13,14 +12,40 @@ import {
 
 export default function VerifyOtpClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
 
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
 
+  const inputsRef = useRef([]);
+
+  // 🔥 Handle input change
+  const handleChange = (value, index) => {
+    if (!/^[0-9]?$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Move to next input
+    if (value && index < 3) {
+      inputsRef.current[index + 1].focus();
+    }
+  };
+
+  // 🔥 Handle backspace
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputsRef.current[index - 1].focus();
+    }
+  };
+
   const handleVerify = async () => {
-    if (!email || !otp) {
-      alert("Enter email and OTP");
+    const finalOtp = otp.join("");
+
+    if (finalOtp.length !== 4) {
+      alert("Enter complete OTP");
       return;
     }
 
@@ -32,7 +57,7 @@ export default function VerifyOtpClient() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email, otp: finalOtp }),
       });
 
       const data = await res.json();
@@ -74,34 +99,43 @@ export default function VerifyOtpClient() {
         </Typography>
 
         <Typography variant="body2" color="text.secondary" mb={3}>
-          Enter the OTP sent to your email
+          Enter the 4-digit OTP
         </Typography>
 
-        {/* Email */}
-        <TextField
-          fullWidth
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          margin="normal"
-        />
+        {/* 🔢 OTP BOXES */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mb: 3,
+          }}
+        >
+          {otp.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => (inputsRef.current[index] = el)}
+              value={digit}
+              onChange={(e) => handleChange(e.target.value, index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              maxLength={1}
+              style={{
+                width: "50px",
+                height: "55px",
+                textAlign: "center",
+                fontSize: "20px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                outline: "none",
+              }}
+            />
+          ))}
+        </Box>
 
-        {/* OTP */}
-        <TextField
-          fullWidth
-          label="OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          margin="normal"
-        />
-
-        {/* Button */}
         <Button
           fullWidth
           variant="contained"
           sx={{
-            mt: 3,
             py: 1.3,
             borderRadius: 3,
             backgroundColor: "#0f172a",
@@ -110,7 +144,7 @@ export default function VerifyOtpClient() {
             },
           }}
           onClick={handleVerify}
-          disabled={loading || !email || !otp}
+          disabled={loading}
         >
           {loading ? (
             <CircularProgress size={24} color="inherit" />
@@ -122,5 +156,4 @@ export default function VerifyOtpClient() {
     </Box>
   );
 }
-
 
