@@ -128,7 +128,7 @@ export default function AuthForm({ type }) {
             {type === "login" ? "Login" : "Register"}
           </Button>
 
-          {/* Links */}
+          
           <Typography mt={2} textAlign="center">
             {type === "login" ? (
               <>
