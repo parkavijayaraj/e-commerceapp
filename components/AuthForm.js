@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, Paper, Link, Alert } from "@mui/material";
+import { Box, TextField, Button, Typography, Paper, Link, Alert, CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 export default function AuthForm({ type }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false); 
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
@@ -16,6 +17,7 @@ export default function AuthForm({ type }) {
 
   // LOGIN
   const handleLogin = async () => {
+    setLoading(true); 
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -44,6 +46,7 @@ export default function AuthForm({ type }) {
 
   // REGISTER
   const handleRegister = async () => {
+    setLoading(true); 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -64,6 +67,9 @@ export default function AuthForm({ type }) {
       setMessage(err.message);
       setError(true);
       console.error(err);
+    }
+    finally {
+      setLoading(false); 
     }
   };
 
@@ -153,3 +159,5 @@ export default function AuthForm({ type }) {
     </Box>
   );
 }
+
+

@@ -1,35 +1,41 @@
+// /app/api/auth/send-otp/route.js
 import nodemailer from "nodemailer";
-import jwt from "jsonwebtoken";
+import { dbConnect } from "@/app/lib/dbConnect";
+import Otp from "@/app/models/Otp";
 
 export async function POST(req) {
   try {
     const { email } = await req.json();
-    if (!email) {
-      return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 });
-    }
 
-    const otp = Math.floor(1000 + Math.random() * 9000);
-    const token = jwt.sign({ email, otp }, process.env.NODEMAILER_JWTSECRET, { expiresIn: "10m" });
+    await dbConnect();
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    await Otp.create({
+      email: email.toLowerCase(),
+      otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    });
 
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      secure: true,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      service: "gmail",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
     });
 
     await transporter.sendMail({
-      from: `"${process.env.EMAIL_FRIENDLY_NAME}" <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_USER,
       to: email,
-      subject: "Your OTP for MyShop",
-      html: `<p>Your OTP is: <b>${otp}</b></p>`,
+      subject: "OTP",
+      text: `Your OTP is ${otp}`,
     });
 
-    return new Response(JSON.stringify({ token, message: "OTP sent successfully" }), { status: 200 });
+    return Response.json({ message: "OTP sent" });
+
   } catch (err) {
-    console.error(err);
-    return new Response(JSON.stringify({ error: "Failed to send OTP", details: err.message }), { status: 500 });
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
-
 
