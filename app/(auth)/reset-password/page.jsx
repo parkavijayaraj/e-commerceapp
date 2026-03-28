@@ -1,4 +1,6 @@
-"use client";
+'use client';
+
+export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -16,7 +18,8 @@ import { Visibility, VisibilityOff, Lock } from "@mui/icons-material";
 
 export default function ResetPassword() {
   const router = useRouter();
-  const token = useSearchParams().get("token");
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -24,74 +27,55 @@ export default function ResetPassword() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Check mismatch
   const isMismatch = confirm && password !== confirm;
 
   const handleReset = async () => {
+    if (!token) {
+      alert("Invalid or missing token");
+      return;
+    }
+
     if (isMismatch) return;
 
     setLoading(true);
 
-    const res = await fetch("/api/auth/reset-password", {
-      method: "POST",
-      body: JSON.stringify({ token, password }),
-    });
+    try {
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Password updated ✅");
+        router.push("/login");
+      } else {
+        alert(data.error || "Something went wrong");
+      }
+    } catch (err) {
+      alert("Error occurred");
+    }
 
     setLoading(false);
-
-    if (res.ok) {
-      alert("Password updated ✅");
-      router.push("/login");
-    } else {
-      alert("Something went wrong");
-    }
   };
 
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        backgroundColor: "#f5f7fb",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Paper
-        elevation={6}
-        sx={{
-          width: 380,
-          p: 4,
-          borderRadius: 4,
-          textAlign: "center",
-        }}
-      >
-        {/* Icon */}
-        <Box
-          sx={{
-            width: 60,
-            height: 60,
-            mx: "auto",
-            mb: 2,
-            borderRadius: "50%",
-            backgroundColor: "#eef2ff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+    <Box sx={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#f5f7fb" }}>
+      <Paper elevation={6} sx={{ width: 380, p: 4, borderRadius: 4, textAlign: "center" }}>
+
+        <Box sx={{ width: 60, height: 60, mx: "auto", mb: 2, borderRadius: "50%", backgroundColor: "#eef2ff", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Lock color="primary" />
         </Box>
 
-        <Typography variant="h5" fontWeight="bold">
-          Reset Password
-        </Typography>
-
+        <Typography variant="h5" fontWeight="bold">Reset Password</Typography>
         <Typography variant="body2" color="text.secondary" mb={3}>
-          Enter your new password below
+          Enter your new password
         </Typography>
 
-        {/* New Password */}
         <TextField
           fullWidth
           label="New Password"
@@ -110,7 +94,6 @@ export default function ResetPassword() {
           }}
         />
 
-        {/* Confirm Password */}
         <TextField
           fullWidth
           label="Confirm Password"
@@ -131,28 +114,16 @@ export default function ResetPassword() {
           }}
         />
 
-        {/* Button */}
         <Button
           fullWidth
           variant="contained"
-          sx={{
-            mt: 3,
-            py: 1.3,
-            borderRadius: 3,
-            backgroundColor: "#0f172a",
-            "&:hover": {
-              backgroundColor: "#020617",
-            },
-          }}
+          sx={{ mt: 3, py: 1.3, borderRadius: 3, backgroundColor: "#0f172a" }}
           onClick={handleReset}
           disabled={loading || isMismatch || !password || !confirm}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Reset Password"
-          )}
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Reset Password"}
         </Button>
+
       </Paper>
     </Box>
   );
