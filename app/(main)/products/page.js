@@ -181,7 +181,4 @@ export default function AdminProducts() {
     </Paper>
   );
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> be68c985b1f3d16f158dc579cacfae9e06030a22

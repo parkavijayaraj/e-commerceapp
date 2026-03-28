@@ -1,4 +1,5 @@
 // /app/api/auth/send-otp/route.js
+
 import nodemailer from "nodemailer";
 import { dbConnect } from "@/app/lib/dbConnect";
 import Otp from "@/app/models/Otp";
@@ -6,112 +7,62 @@ import Otp from "@/app/models/Otp";
 export async function POST(req) {
   try {
     const { email } = await req.json();
-<<<<<<< HEAD
+
+    // 1. Validation
+    if (!email) {
+      return new Response(JSON.stringify({ error: "Email is required" }), {
+        status: 400,
+      });
+    }
 
     await dbConnect();
 
+    // 2. Generate OTP
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
+    // 3. Save OTP in DB
     await Otp.create({
       email: email.toLowerCase(),
       otp,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
     });
-=======
 
-    // 1. Basic Validation
-    if (!email) {
-      return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 });
-    }
-
-    // 2. Generate 4-digit OTP and Sign JWT
-    // We include the email and OTP in the token so we can verify them later
-    const otp = Math.floor(1000 + Math.random() * 9000);
-    
-    if (!process.env.NODEMAILER_JWTSECRET) {
-      throw new Error("NODEMAILER_JWTSECRET is not defined in .env");
-    }
->>>>>>> be68c985b1f3d16f158dc579cacfae9e06030a22
-
-    const token = jwt.sign(
-      { email, otp }, 
-      process.env.NODEMAILER_JWTSECRET, 
-      { expiresIn: "10m" }
-    );
-
-    // 3. Configure Nodemailer Transporter
+    // 4. Configure transporter
     const transporter = nodemailer.createTransport({
-<<<<<<< HEAD
-      service: "gmail",
-=======
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT) || 465,
-      secure: true, // true for 465, false for other ports
->>>>>>> be68c985b1f3d16f158dc579cacfae9e06030a22
+      service: "gmail", // you can later switch to SMTP config
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
 
-    // 4. Send the Email
+    // 5. Send email
     await transporter.sendMail({
-<<<<<<< HEAD
       from: process.env.SMTP_USER,
       to: email,
-      subject: "OTP",
-      text: `Your OTP is ${otp}`,
-    });
-
-    return Response.json({ message: "OTP sent" });
-
-  } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
-  }
-}
-
-=======
-      from: `"${process.env.EMAIL_FRIENDLY_NAME || 'MyShop'}" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: "Your OTP for MyShop",
+      subject: "Your OTP",
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
-          <h2 style="color: #333;">Verification Code</h2>
-          <p>Your OTP for MyShop is: <b style="font-size: 24px; color: #1976d2;">${otp}</b></p>
-          <p>This code is valid for 10 minutes.</p>
-          <hr style="border: 0; border-top: 1px solid #eee;" />
-          <p style="font-size: 12px; color: #888;">If you did not request this, please ignore this email.</p>
+        <div style="font-family: Arial; padding: 20px;">
+          <h2>OTP Verification</h2>
+          <p>Your OTP is:</p>
+          <h1 style="color: #1976d2;">${otp}</h1>
+          <p>This OTP is valid for 10 minutes.</p>
         </div>
       `,
     });
 
-    // 5. Success Response
+    // 6. Response
     return new Response(
-      JSON.stringify({ 
-        token, // Send this back so the frontend can use it for the verify-otp step
-        message: "OTP sent successfully" 
-      }), 
-      { 
-        status: 200,
-        headers: { "Content-Type": "application/json" } 
-      }
+      JSON.stringify({ message: "OTP sent successfully" }),
+      { status: 200 }
     );
 
   } catch (err) {
     console.error("OTP Error:", err);
+
     return new Response(
-      JSON.stringify({ 
-        error: "Failed to send OTP", 
-        details: err.message 
-      }), 
-      { 
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      }
+      JSON.stringify({ error: err.message }),
+      { status: 500 }
     );
   }
 }
-
-
-
->>>>>>> be68c985b1f3d16f158dc579cacfae9e06030a22
