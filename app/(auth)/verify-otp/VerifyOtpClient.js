@@ -2,6 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Box,
+  TextField,
+  Typography,
+  Button,
+  CircularProgress,
+  Paper,
+} from "@mui/material";
 
 export default function VerifyOtpClient() {
   const router = useRouter();
@@ -31,8 +39,6 @@ export default function VerifyOtpClient() {
 
       if (res.ok) {
         alert("OTP Verified ✅");
-
-        // redirect to reset-password with token (if using JWT flow)
         router.push(`/reset-password?token=${data.token}`);
       } else {
         alert(data.error || "Invalid OTP");
@@ -45,29 +51,75 @@ export default function VerifyOtpClient() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h2>Verify OTP</h2>
+    <Box
+      sx={{
+        height: "100vh",
+        backgroundColor: "#f5f7fb",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          width: 380,
+          p: 4,
+          borderRadius: 4,
+          textAlign: "center",
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" mb={1}>
+          Verify OTP
+        </Typography>
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <Typography variant="body2" color="text.secondary" mb={3}>
+          Enter the OTP sent to your email
+        </Typography>
 
-      <br /><br />
+        {/* Email */}
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          margin="normal"
+        />
 
-      <input
-        placeholder="Enter OTP"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-      />
+        {/* OTP */}
+        <TextField
+          fullWidth
+          label="OTP"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          margin="normal"
+        />
 
-      <br /><br />
-
-      <button onClick={handleVerify} disabled={loading}>
-        {loading ? "Verifying..." : "Verify OTP"}
-      </button>
-    </div>
+        {/* Button */}
+        <Button
+          fullWidth
+          variant="contained"
+          sx={{
+            mt: 3,
+            py: 1.3,
+            borderRadius: 3,
+            backgroundColor: "#0f172a",
+            "&:hover": {
+              backgroundColor: "#020617",
+            },
+          }}
+          onClick={handleVerify}
+          disabled={loading || !email || !otp}
+        >
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Verify OTP"
+          )}
+        </Button>
+      </Paper>
+    </Box>
   );
 }
 
