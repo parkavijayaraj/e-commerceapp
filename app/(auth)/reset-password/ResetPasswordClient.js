@@ -12,7 +12,8 @@ import {
   CircularProgress,
   Paper,
 } from "@mui/material";
-import { Visibility, VisibilityOff, Lock } from "@mui/icons-material";
+import {  Lock } from "@mui/icons-material";
+
 
 export default function ResetPasswordClient() {
   const router = useRouter();
