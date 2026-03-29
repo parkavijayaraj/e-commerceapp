@@ -17,6 +17,7 @@ export async function POST(req) {
     });
 
     if (!record) {
+      console.log("OTP not found for:", email, otp);
       return Response.json({ error: "OTP not found" }, { status: 400 });
     }
 
